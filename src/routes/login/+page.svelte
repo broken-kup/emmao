@@ -95,9 +95,9 @@
 
 					<button
 						onclick={() => selectRole('companion')}
-						class="flex w-full items-center gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition hover:border-purple-300 hover:shadow-md"
+						class="flex w-full items-center gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition hover:border-green-300 hover:shadow-md"
 					>
-						<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-purple-100">
+						<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-green-100">
 							<span class="text-lg">🙋</span>
 						</div>
 						<div class="text-left">
@@ -118,8 +118,8 @@
 						</button>
 						<span
 							class="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold {isMentor
-								? 'bg-blue-100 text-blue-700'
-								: 'bg-purple-100 text-purple-700'}"
+							? 'bg-blue-100 text-blue-700'
+							: 'bg-green-100 text-green-700'}"
 						>
 							{isMentor ? '양육자' : '동반자'}
 						</span>
@@ -157,9 +157,9 @@
 						<button
 							type="submit"
 							disabled={!myName.trim() || !partnerName.trim() || submitting}
-							class="w-full rounded-xl py-3 text-sm font-semibold text-white shadow-sm transition hover:opacity-90 disabled:opacity-40 {isMentor
-								? 'bg-blue-500'
-								: 'bg-purple-500'}"
+						class="w-full rounded-xl py-3 text-sm font-semibold text-white shadow-sm transition hover:opacity-90 disabled:opacity-40 {isMentor
+							? 'bg-blue-500'
+							: 'bg-green-500'}"
 						>
 							시작하기
 						</button>

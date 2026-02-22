@@ -7,6 +7,7 @@
 	interface Post {
 		id: number;
 		authorName: string;
+		category: string | null;
 		type: string;
 		content: string | null;
 		imageKey: string | null;

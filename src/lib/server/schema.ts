@@ -25,6 +25,7 @@ export const posts = pgTable('posts', {
 	id: serial('id').primaryKey(),
 	pairKey: varchar('pair_key', { length: 200 }),
 	authorName: varchar('author_name', { length: 50 }).notNull(),
+	category: varchar('category', { length: 30 }),
 	type: varchar('type', { length: 20 }).notNull(),
 	content: text('content'),
 	imageKey: varchar('image_key', { length: 500 }),
@@ -73,6 +74,18 @@ export const scriptureVerses = pgTable('scripture_verses', {
 	verse2Ref: varchar('verse2_ref', { length: 100 }).notNull(),
 	verse2Text: text('verse2_text').notNull()
 });
+
+export const meetingDates = pgTable(
+	'meeting_dates',
+	{
+		id: serial('id').primaryKey(),
+		pairKey: varchar('pair_key', { length: 200 }),
+		week: integer('week').notNull(),
+		meetingDate: varchar('meeting_date', { length: 20 }).notNull(),
+		updatedAt: timestamp('updated_at').defaultNow().notNull()
+	},
+	(t) => [unique().on(t.pairKey, t.week)]
+);
 
 export const taskChecks = pgTable(
 	'task_checks',

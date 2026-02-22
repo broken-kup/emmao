@@ -7,6 +7,7 @@
 	interface Post {
 		id: number;
 		authorName: string;
+		category: string | null;
 		type: string;
 		content: string | null;
 		imageKey: string | null;
@@ -15,6 +16,13 @@
 		likeCount: number;
 		commentCount: number;
 	}
+
+	const CATEGORY_STYLES: Record<string, { label: string; color: string }> = {
+		bible: { label: '성경읽기', color: 'bg-amber-100 text-amber-700' },
+		sermon: { label: '설교기록', color: 'bg-blue-100 text-blue-700' },
+		qt: { label: 'QT', color: 'bg-green-100 text-green-700' },
+		free: { label: '자유', color: 'bg-gray-100 text-gray-600' }
+	};
 
 	let { post, ondelete }: { post: Post; ondelete: (id: number) => void } = $props();
 
@@ -71,17 +79,25 @@
 	function getImageUrl(key: string) {
 		return `${env.PUBLIC_R2_URL || ''}/${key}`;
 	}
+
+	const catStyle = $derived(post.category ? CATEGORY_STYLES[post.category] : null);
 </script>
 
 <article class="mb-3 border-b border-gray-100 bg-white">
-	<!-- Header -->
 	<div class="flex items-center justify-between px-4 py-3">
 		<div class="flex items-center gap-2">
-			<div class="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-purple-500 text-xs font-bold text-white">
+			<div class="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-green-500 text-xs font-bold text-white">
 				{post.authorName.charAt(0)}
 			</div>
 			<div>
-				<p class="text-sm font-semibold">{post.authorName}</p>
+				<div class="flex items-center gap-1.5">
+					<p class="text-sm font-semibold">{post.authorName}</p>
+					{#if catStyle}
+						<span class="rounded-full px-2 py-0.5 text-[10px] font-semibold {catStyle.color}">
+							{catStyle.label}
+						</span>
+					{/if}
+				</div>
 				<p class="text-[10px] text-gray-400">{formatDate(post.createdAt)}</p>
 			</div>
 		</div>
@@ -94,7 +110,6 @@
 		</button>
 	</div>
 
-	<!-- Content -->
 	{#if post.type === 'photo' && post.imageKey}
 		<div class="aspect-square w-full bg-gray-50">
 			<img
@@ -109,7 +124,6 @@
 		</div>
 	{/if}
 
-	<!-- Actions -->
 	<div class="px-4 pt-2">
 		<button
 			onclick={toggleLike}
@@ -124,7 +138,6 @@
 		{/if}
 	</div>
 
-	<!-- Caption -->
 	{#if post.caption}
 		<div class="px-4 pt-1 pb-2">
 			<p class="text-sm">
@@ -134,6 +147,5 @@
 		</div>
 	{/if}
 
-	<!-- Comments -->
 	<CommentSection postId={post.id} />
 </article>

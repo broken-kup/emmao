@@ -142,7 +142,7 @@
 								<span class="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-semibold text-blue-700">양육자</span>
 								<span class="text-sm font-medium text-gray-800">{pair.mentorName}</span>
 								<span class="text-gray-300">·</span>
-								<span class="rounded-full bg-purple-100 px-2 py-0.5 text-[10px] font-semibold text-purple-700">동반자</span>
+								<span class="rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-semibold text-green-700">동반자</span>
 								<span class="text-sm font-medium text-gray-800">{pair.companionName}</span>
 							</div>
 							<p class="mt-1 text-[10px] text-gray-400">{formatDate(pair.createdAt)}</p>

@@ -21,7 +21,7 @@
 		</a>
 		{#if $user}
 			<div class="flex items-center gap-1">
-				<span class="rounded-full px-2 py-0.5 text-[10px] font-semibold {$user.role === 'mentor' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'}">
+				<span class="rounded-full px-2 py-0.5 text-[10px] font-semibold {$user.role === 'mentor' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}">
 					{$user.role === 'mentor' ? '양육자' : '동반자'}
 				</span>
 				<span class="text-[10px] text-gray-400">

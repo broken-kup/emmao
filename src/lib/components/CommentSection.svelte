@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { user } from '$lib/stores/user';
 	import { Send, Trash2 } from 'lucide-svelte';
+	import { onMount } from 'svelte';
 
 	interface Comment {
 		id: number;
@@ -14,7 +15,6 @@
 
 	let comments = $state<Comment[]>([]);
 	let newComment = $state('');
-	let expanded = $state(false);
 	let loading = $state(false);
 
 	async function loadComments() {
@@ -44,13 +44,6 @@
 		await loadComments();
 	}
 
-	function toggleExpand() {
-		if (!expanded) {
-			loadComments();
-		}
-		expanded = !expanded;
-	}
-
 	function formatTime(dateStr: string) {
 		const d = new Date(dateStr);
 		const diff = Date.now() - d.getTime();
@@ -62,52 +55,43 @@
 		const days = Math.floor(hours / 24);
 		return `${days}일 전`;
 	}
+
+	onMount(loadComments);
 </script>
 
-<div class="border-t border-gray-100">
-	<button
-		onclick={toggleExpand}
-		class="w-full px-4 py-2 text-left text-xs text-gray-500 hover:text-gray-700"
-	>
-		{expanded ? '댓글 닫기' : '댓글 보기'}
-	</button>
-
-	{#if expanded}
-		<div class="px-4 pb-3">
-			{#each comments as comment}
-				<div class="mb-2 flex items-start gap-2">
-					<div class="flex-1 text-sm">
-						<span class="font-semibold">{comment.authorName}</span>
-						<span class="ml-1 text-gray-800">{comment.content}</span>
-						<span class="ml-2 text-xs text-gray-400">{formatTime(comment.createdAt)}</span>
-					</div>
-					{#if $user && comment.authorName === $user.name}
-						<button
-							onclick={() => deleteComment(comment.id)}
-							class="shrink-0 p-1 text-gray-300 hover:text-red-500"
-						>
-							<Trash2 size={12} />
-						</button>
-					{/if}
-				</div>
-			{/each}
-
-			<div class="mt-2 flex items-center gap-2">
-				<input
-					type="text"
-					bind:value={newComment}
-					placeholder="댓글 달기..."
-					class="flex-1 rounded-full border border-gray-200 px-3 py-1.5 text-sm focus:border-gray-400 focus:outline-none"
-					onkeydown={(e) => e.key === 'Enter' && addComment()}
-				/>
-				<button
-					onclick={addComment}
-					disabled={!newComment.trim() || loading}
-					class="text-blue-500 disabled:opacity-30"
-				>
-					<Send size={18} />
-				</button>
+<div class="border-t border-gray-100 px-4 py-3">
+	{#each comments as comment}
+		<div class="mb-2 flex items-start gap-2">
+			<div class="flex-1 text-sm">
+				<span class="font-semibold">{comment.authorName}</span>
+				<span class="ml-1 text-gray-800">{comment.content}</span>
+				<span class="ml-2 text-xs text-gray-400">{formatTime(comment.createdAt)}</span>
 			</div>
+			{#if $user && comment.authorName === $user.name}
+				<button
+					onclick={() => deleteComment(comment.id)}
+					class="shrink-0 p-1 text-gray-300 hover:text-red-500"
+				>
+					<Trash2 size={12} />
+				</button>
+			{/if}
 		</div>
-	{/if}
+	{/each}
+
+	<div class="mt-2 flex items-center gap-2">
+		<input
+			type="text"
+			bind:value={newComment}
+			placeholder="댓글 달기..."
+			class="flex-1 rounded-full border border-gray-200 px-3 py-1.5 text-sm focus:border-gray-400 focus:outline-none"
+			onkeydown={(e) => e.key === 'Enter' && addComment()}
+		/>
+		<button
+			onclick={addComment}
+			disabled={!newComment.trim() || loading}
+			class="text-blue-500 disabled:opacity-30"
+		>
+			<Send size={18} />
+		</button>
+	</div>
 </div>

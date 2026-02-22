@@ -3,6 +3,14 @@
 	import { user } from '$lib/stores/user';
 	import { ImagePlus, FileText, ArrowLeft, Loader2 } from 'lucide-svelte';
 
+	const CATEGORIES = [
+		{ key: 'bible', label: '성경읽기', color: 'bg-amber-100 text-amber-700' },
+		{ key: 'sermon', label: '설교기록', color: 'bg-blue-100 text-blue-700' },
+		{ key: 'qt', label: 'QT', color: 'bg-green-100 text-green-700' },
+		{ key: 'free', label: '자유', color: 'bg-gray-100 text-gray-600' }
+	];
+
+	let selectedCategory = $state('bible');
 	let activeTab = $state<'photo' | 'text'>('photo');
 	let caption = $state('');
 	let textContent = $state('');
@@ -52,6 +60,7 @@
 				body: JSON.stringify({
 					pairKey: $user.pairKey,
 					authorName: $user.name,
+					category: selectedCategory,
 					type: activeTab,
 					content: activeTab === 'text' ? textContent : null,
 					imageKey,
@@ -75,7 +84,6 @@
 </script>
 
 <div class="mx-auto max-w-lg">
-	<!-- Top Bar -->
 	<div class="flex items-center justify-between border-b border-gray-100 px-4 py-3">
 		<a href="/" class="p-1 text-gray-600 hover:text-black">
 			<ArrowLeft size={22} />
@@ -92,6 +100,20 @@
 				공유
 			{/if}
 		</button>
+	</div>
+
+	<!-- Category Selection -->
+	<div class="flex gap-2 border-b border-gray-100 px-4 py-3">
+		{#each CATEGORIES as cat}
+			<button
+				onclick={() => (selectedCategory = cat.key)}
+				class="rounded-full px-3 py-1.5 text-xs font-semibold transition {selectedCategory === cat.key
+					? cat.color + ' ring-2 ring-offset-1 ring-gray-300'
+					: 'bg-gray-50 text-gray-400'}"
+			>
+				{cat.label}
+			</button>
+		{/each}
 	</div>
 
 	<!-- Tab -->

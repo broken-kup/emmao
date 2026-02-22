@@ -17,6 +17,7 @@ export const GET: RequestHandler = async ({ url }) => {
 			id: posts.id,
 			pairKey: posts.pairKey,
 			authorName: posts.authorName,
+			category: posts.category,
 			type: posts.type,
 			content: posts.content,
 			imageKey: posts.imageKey,
@@ -36,11 +37,11 @@ export const GET: RequestHandler = async ({ url }) => {
 
 export const POST: RequestHandler = async ({ request }) => {
 	const body = await request.json();
-	const { pairKey, authorName, type, content, imageKey, caption } = body;
+	const { pairKey, authorName, category, type, content, imageKey, caption } = body;
 
 	const [post] = await db
 		.insert(posts)
-		.values({ pairKey, authorName, type, content, imageKey, caption })
+		.values({ pairKey, authorName, category, type, content, imageKey, caption })
 		.returning();
 
 	return json(post, { status: 201 });
