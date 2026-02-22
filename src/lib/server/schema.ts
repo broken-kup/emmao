@@ -9,6 +9,18 @@ import {
 	unique
 } from 'drizzle-orm/pg-core';
 
+export const pairs = pgTable(
+	'pairs',
+	{
+		id: serial('id').primaryKey(),
+		mentorName: varchar('mentor_name', { length: 50 }).notNull(),
+		companionName: varchar('companion_name', { length: 50 }).notNull(),
+		pairKey: varchar('pair_key', { length: 200 }).notNull(),
+		createdAt: timestamp('created_at').defaultNow().notNull()
+	},
+	(t) => [unique().on(t.pairKey)]
+);
+
 export const posts = pgTable('posts', {
 	id: serial('id').primaryKey(),
 	pairKey: varchar('pair_key', { length: 200 }),

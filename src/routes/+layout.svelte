@@ -9,16 +9,18 @@
 
 	let { children } = $props();
 
-	const isLoginPage = $derived(page.url.pathname === '/login');
+	const isPublicPage = $derived(
+		page.url.pathname === '/login' || page.url.pathname === '/admin'
+	);
 
 	$effect(() => {
-		if (browser && !$user && !isLoginPage) {
+		if (browser && !$user && !isPublicPage) {
 			goto('/login');
 		}
 	});
 </script>
 
-{#if isLoginPage}
+{#if isPublicPage}
 	{@render children()}
 {:else}
 	<div class="flex min-h-screen flex-col">

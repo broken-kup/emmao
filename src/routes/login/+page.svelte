@@ -27,21 +27,30 @@
 		partnerName = '';
 	}
 
-	function handleSubmit() {
+	async function handleSubmit() {
 		if (!role || !myName.trim() || !partnerName.trim() || submitting) return;
 		submitting = true;
 
 		const mentorName = isMentor ? myName.trim() : partnerName.trim();
 		const companionName = isMentor ? partnerName.trim() : myName.trim();
+		const pairKey = `${mentorName}::${companionName}`;
 
-		user.login({
-			name: myName.trim(),
-			role,
-			mentorName,
-			companionName,
-			pairKey: `${mentorName}::${companionName}`
-		});
-		goto('/');
+		try {
+			const res = await fetch(`/api/pairs?pairKey=${encodeURIComponent(pairKey)}`);
+			const pairs = await res.json();
+
+			if (!pairs || pairs.length === 0) {
+				alert('등록되지 않은 페어입니다.\n관리자에게 문의해주세요.');
+				submitting = false;
+				return;
+			}
+
+			user.login({ name: myName.trim(), role, mentorName, companionName, pairKey });
+			goto('/');
+		} catch {
+			alert('서버 연결에 실패했습니다. 잠시 후 다시 시도해주세요.');
+			submitting = false;
+		}
 	}
 </script>
 
