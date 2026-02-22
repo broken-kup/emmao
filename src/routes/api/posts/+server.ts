@@ -1,17 +1,21 @@
 import { json } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import { posts, likes, comments } from '$lib/server/schema';
-import { desc, eq, sql } from 'drizzle-orm';
+import { desc, eq, sql, and } from 'drizzle-orm';
 import { deleteObject } from '$lib/server/r2';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async ({ url }) => {
 	const limit = Number(url.searchParams.get('limit')) || 20;
 	const offset = Number(url.searchParams.get('offset')) || 0;
+	const pairKey = url.searchParams.get('pairKey') || '';
+
+	const conditions = pairKey ? eq(posts.pairKey, pairKey) : undefined;
 
 	const result = await db
 		.select({
 			id: posts.id,
+			pairKey: posts.pairKey,
 			authorName: posts.authorName,
 			type: posts.type,
 			content: posts.content,
@@ -22,6 +26,7 @@ export const GET: RequestHandler = async ({ url }) => {
 			commentCount: sql<number>`(SELECT COUNT(*) FROM comments WHERE comments.post_id = ${posts.id})`
 		})
 		.from(posts)
+		.where(conditions)
 		.orderBy(desc(posts.createdAt))
 		.limit(limit)
 		.offset(offset);
@@ -31,11 +36,11 @@ export const GET: RequestHandler = async ({ url }) => {
 
 export const POST: RequestHandler = async ({ request }) => {
 	const body = await request.json();
-	const { authorName, type, content, imageKey, caption } = body;
+	const { pairKey, authorName, type, content, imageKey, caption } = body;
 
 	const [post] = await db
 		.insert(posts)
-		.values({ authorName, type, content, imageKey, caption })
+		.values({ pairKey, authorName, type, content, imageKey, caption })
 		.returning();
 
 	return json(post, { status: 201 });

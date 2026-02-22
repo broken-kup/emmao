@@ -1,9 +1,12 @@
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
 
-interface UserInfo {
+export interface UserInfo {
 	name: string;
 	role: 'mentor' | 'companion';
+	mentorName: string;
+	companionName: string;
+	pairKey: string;
 }
 
 function createUserStore() {
@@ -12,28 +15,29 @@ function createUserStore() {
 		const stored = localStorage.getItem('emmao_user');
 		if (stored) {
 			try {
-				initial = JSON.parse(stored);
+				const parsed = JSON.parse(stored);
+				if (parsed.pairKey) {
+					initial = parsed;
+				}
 			} catch {
 				initial = null;
 			}
 		}
 	}
 
-	const { subscribe, set, update } = writable<UserInfo | null>(initial);
+	const { subscribe, set } = writable<UserInfo | null>(initial);
 
 	return {
 		subscribe,
 		login(info: UserInfo) {
 			if (browser) {
 				localStorage.setItem('emmao_user', JSON.stringify(info));
-				document.cookie = `emmao_user=${encodeURIComponent(JSON.stringify(info))}; path=/; max-age=31536000`;
 			}
 			set(info);
 		},
 		logout() {
 			if (browser) {
 				localStorage.removeItem('emmao_user');
-				document.cookie = 'emmao_user=; path=/; max-age=0';
 			}
 			set(null);
 		}

@@ -2,6 +2,7 @@
 	import PostCard from '$lib/components/PostCard.svelte';
 	import { Loader2 } from 'lucide-svelte';
 	import { onMount } from 'svelte';
+	import { user } from '$lib/stores/user';
 
 	interface Post {
 		id: number;
@@ -21,7 +22,8 @@
 	let loadingMore = $state(false);
 
 	async function loadPosts(offset = 0) {
-		const res = await fetch(`/api/posts?limit=20&offset=${offset}`);
+		const pairKey = $user?.pairKey || '';
+		const res = await fetch(`/api/posts?limit=20&offset=${offset}&pairKey=${encodeURIComponent(pairKey)}`);
 		const data: Post[] = await res.json();
 		if (offset === 0) {
 			posts = data;

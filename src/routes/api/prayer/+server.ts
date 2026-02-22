@@ -4,22 +4,33 @@ import { prayerTopics } from '$lib/server/schema';
 import { and, eq, asc } from 'drizzle-orm';
 import type { RequestHandler } from './$types';
 
-export const GET: RequestHandler = async () => {
+export const GET: RequestHandler = async ({ url }) => {
+	const pairKey = url.searchParams.get('pairKey') || '';
+
+	const conditions = pairKey ? eq(prayerTopics.pairKey, pairKey) : undefined;
+
 	const result = await db
 		.select()
 		.from(prayerTopics)
+		.where(conditions)
 		.orderBy(asc(prayerTopics.category), asc(prayerTopics.slotIndex));
 
 	return json(result);
 };
 
 export const POST: RequestHandler = async ({ request }) => {
-	const { category, slotIndex, content } = await request.json();
+	const { pairKey, category, slotIndex, content } = await request.json();
 
 	const existing = await db
 		.select()
 		.from(prayerTopics)
-		.where(and(eq(prayerTopics.category, category), eq(prayerTopics.slotIndex, slotIndex)));
+		.where(
+			and(
+				eq(prayerTopics.pairKey, pairKey),
+				eq(prayerTopics.category, category),
+				eq(prayerTopics.slotIndex, slotIndex)
+			)
+		);
 
 	if (existing.length > 0) {
 		const [updated] = await db
@@ -32,7 +43,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
 	const [created] = await db
 		.insert(prayerTopics)
-		.values({ category, slotIndex, content })
+		.values({ pairKey, category, slotIndex, content })
 		.returning();
 
 	return json(created, { status: 201 });

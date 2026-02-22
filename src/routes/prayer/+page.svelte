@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { Plus, Save, Trash2, Loader2 } from 'lucide-svelte';
+	import { user } from '$lib/stores/user';
 
 	interface PrayerTopic {
 		id: number;
@@ -29,8 +30,12 @@
 	let newWeeklyContent = $state('');
 	let saving = $state(false);
 
+	const pairKey = $derived($user?.pairKey || '');
+	const mentorName = $derived($user?.mentorName || '양육자');
+	const companionName = $derived($user?.companionName || '동반자');
+
 	async function loadTopics() {
-		const res = await fetch('/api/prayer');
+		const res = await fetch(`/api/prayer?pairKey=${encodeURIComponent(pairKey)}`);
 		topics = await res.json();
 
 		for (let i = 0; i < 3; i++) {
@@ -46,7 +51,7 @@
 		await fetch('/api/prayer', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ category, slotIndex: index, content: content.trim() })
+			body: JSON.stringify({ pairKey, category, slotIndex: index, content: content.trim() })
 		});
 		await loadTopics();
 		saving = false;
@@ -59,6 +64,7 @@
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
+				pairKey,
 				category: 'weekly',
 				slotIndex: newWeeklyWeek,
 				content: newWeeklyContent.trim()
@@ -84,9 +90,8 @@
 			<Loader2 size={24} class="animate-spin text-gray-400" />
 		</div>
 	{:else}
-		<!-- 양육자 기도제목 -->
 		<section class="mb-6">
-			<h2 class="mb-3 text-base font-bold">양육자 기도제목</h2>
+			<h2 class="mb-3 text-base font-bold">{mentorName} 기도제목</h2>
 			<div class="space-y-2">
 				{#each [0, 1, 2] as i}
 					<div class="flex items-start gap-2">
@@ -111,9 +116,8 @@
 			</div>
 		</section>
 
-		<!-- 동반자 기도제목 -->
 		<section class="mb-6">
-			<h2 class="mb-3 text-base font-bold">동반자 기도제목</h2>
+			<h2 class="mb-3 text-base font-bold">{companionName} 기도제목</h2>
 			<div class="space-y-2">
 				{#each [0, 1, 2] as i}
 					<div class="flex items-start gap-2">
@@ -138,11 +142,9 @@
 			</div>
 		</section>
 
-		<!-- 주차별 기도제목 -->
 		<section>
 			<h2 class="mb-3 text-base font-bold">주차별 기도제목</h2>
 
-			<!-- 추가 폼 -->
 			<div class="mb-4 rounded-xl border border-gray-200 p-3">
 				<div class="mb-2 flex items-center gap-2">
 					<select
@@ -170,7 +172,6 @@
 				></textarea>
 			</div>
 
-			<!-- 목록 -->
 			{#if weeklyTopics.length === 0}
 				<p class="py-8 text-center text-sm text-gray-400">등록된 주차별 기도제목이 없습니다</p>
 			{:else}

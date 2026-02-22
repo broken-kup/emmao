@@ -11,6 +11,7 @@ import {
 
 export const posts = pgTable('posts', {
 	id: serial('id').primaryKey(),
+	pairKey: varchar('pair_key', { length: 200 }),
 	authorName: varchar('author_name', { length: 50 }).notNull(),
 	type: varchar('type', { length: 20 }).notNull(),
 	content: text('content'),
@@ -44,6 +45,7 @@ export const comments = pgTable('comments', {
 
 export const prayerTopics = pgTable('prayer_topics', {
 	id: serial('id').primaryKey(),
+	pairKey: varchar('pair_key', { length: 200 }),
 	category: varchar('category', { length: 20 }).notNull(),
 	slotIndex: integer('slot_index').notNull(),
 	content: text('content').notNull(),
@@ -64,10 +66,11 @@ export const taskChecks = pgTable(
 	'task_checks',
 	{
 		id: serial('id').primaryKey(),
+		pairKey: varchar('pair_key', { length: 200 }),
 		week: integer('week').notNull(),
 		taskType: varchar('task_type', { length: 30 }).notNull(),
 		completed: boolean('completed').default(false).notNull(),
 		updatedAt: timestamp('updated_at').defaultNow().notNull()
 	},
-	(t) => [unique().on(t.week, t.taskType)]
+	(t) => [unique().on(t.pairKey, t.week, t.taskType)]
 );

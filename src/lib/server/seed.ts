@@ -1,6 +1,5 @@
 import { db } from './db';
-import { scriptureVerses, taskChecks } from './schema';
-import { sql } from 'drizzle-orm';
+import { scriptureVerses } from './schema';
 
 const VERSES = [
 	{
@@ -154,19 +153,9 @@ const VERSES = [
 	}
 ];
 
-const TASK_TYPES = ['textbook', 'memorization', 'reading', 'sermon', 'qt'] as const;
-
 export async function seed() {
 	const existing = await db.select().from(scriptureVerses).limit(1);
 	if (existing.length > 0) return;
 
 	await db.insert(scriptureVerses).values(VERSES);
-
-	const taskRows = [];
-	for (let week = 1; week <= 15; week++) {
-		for (const taskType of TASK_TYPES) {
-			taskRows.push({ week, taskType, completed: false });
-		}
-	}
-	await db.insert(taskChecks).values(taskRows);
 }

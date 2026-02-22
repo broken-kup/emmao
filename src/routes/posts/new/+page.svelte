@@ -50,6 +50,7 @@
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
+					pairKey: $user.pairKey,
 					authorName: $user.name,
 					type: activeTab,
 					content: activeTab === 'text' ? textContent : null,

@@ -4,8 +4,9 @@
 	import { goto } from '$app/navigation';
 
 	function handleLogout() {
+		const role = $user?.role || 'companion';
 		user.logout();
-		goto('/login?role=companion');
+		goto(`/login?role=${role}`);
 	}
 </script>
 
@@ -19,13 +20,18 @@
 			<Plus size={22} strokeWidth={2} />
 		</a>
 		{#if $user}
-			<span class="rounded-full px-2 py-0.5 text-[10px] font-semibold {$user.role === 'mentor' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'}">
-				{$user.role === 'mentor' ? '양육자' : '동반자'}
-			</span>
+			<div class="flex items-center gap-1">
+				<span class="rounded-full px-2 py-0.5 text-[10px] font-semibold {$user.role === 'mentor' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'}">
+					{$user.role === 'mentor' ? '양육자' : '동반자'}
+				</span>
+				<span class="text-[10px] text-gray-400">
+					{$user.mentorName} · {$user.companionName}
+				</span>
+			</div>
 		{/if}
 	</div>
 
-	<h1 class="text-sm font-bold tracking-tight">엠마오로 가는 두 제자</h1>
+	<h1 class="text-xs font-bold tracking-tight">엠마오 동행일기</h1>
 
 	<button
 		onclick={handleLogout}

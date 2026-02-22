@@ -4,13 +4,13 @@
 	import { user } from '$lib/stores/user';
 	import { onMount } from 'svelte';
 
-	let name = $state('');
+	let myName = $state('');
+	let partnerName = $state('');
 	let submitting = $state(false);
 
 	const role = $derived(
-		page.url.searchParams.get('role') === 'mentor' ? 'mentor' as const : 'companion' as const
+		page.url.searchParams.get('role') === 'mentor' ? ('mentor' as const) : ('companion' as const)
 	);
-
 	const isMentor = $derived(role === 'mentor');
 
 	onMount(() => {
@@ -18,54 +18,97 @@
 	});
 
 	function handleSubmit() {
-		if (!name.trim() || submitting) return;
+		if (!myName.trim() || !partnerName.trim() || submitting) return;
 		submitting = true;
-		user.login({ name: name.trim(), role });
+
+		const mentorName = isMentor ? myName.trim() : partnerName.trim();
+		const companionName = isMentor ? partnerName.trim() : myName.trim();
+
+		user.login({
+			name: myName.trim(),
+			role,
+			mentorName,
+			companionName,
+			pairKey: `${mentorName}::${companionName}`
+		});
 		goto('/');
 	}
 </script>
 
-<div class="flex min-h-screen items-center justify-center bg-gradient-to-b {isMentor ? 'from-blue-50 to-white' : 'from-purple-50 to-white'} p-4">
+<div
+	class="flex min-h-screen items-center justify-center p-4"
+	style="background: linear-gradient(to bottom, {isMentor ? '#eff6ff' : '#faf5ff'}, #ffffff)"
+>
 	<div class="w-full max-w-sm">
-		<!-- Logo Area -->
-		<div class="mb-8 text-center">
-			<div class="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl {isMentor ? 'bg-blue-500' : 'bg-purple-500'} shadow-lg">
-				<span class="text-3xl font-bold text-white">엠</span>
-			</div>
+		<div class="mb-6 text-center">
+			<img
+				src="/logo.png"
+				alt="엠마오로 가는 두 제자"
+				class="mx-auto mb-4 h-28 w-28 rounded-2xl object-cover shadow-lg"
+			/>
 			<h1 class="text-xl font-bold text-gray-900">엠마오로 가는 두 제자</h1>
-			<div class="mt-2 inline-flex items-center gap-1.5 rounded-full px-3 py-1 {isMentor ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'}">
-				<span class="text-xs font-semibold">{isMentor ? '양육자' : '동반자'}</span>
-			</div>
+			<p class="mt-1 text-sm font-medium text-gray-500">
+				서림교회 마르투스 일대일 교육 동행일기
+			</p>
+			<p class="mx-auto mt-3 max-w-xs text-[11px] leading-relaxed text-gray-400 italic">
+				"그들이 서로 말하되 길에서 우리에게 말씀하시고 우리에게 성경을 풀어 주실 때에 우리 속에서
+				마음이 뜨겁지 아니하더냐 하고" (눅24:32)
+			</p>
 		</div>
 
-		<!-- Login Form -->
 		<div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-			<form onsubmit={handleSubmit} class="space-y-5">
+			<div class="mb-4 flex justify-center">
+				<span
+					class="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold {isMentor
+						? 'bg-blue-100 text-blue-700'
+						: 'bg-purple-100 text-purple-700'}"
+				>
+					{isMentor ? '양육자 로그인' : '동반자 로그인'}
+				</span>
+			</div>
+
+			<form onsubmit={handleSubmit} class="space-y-4">
 				<div>
-					<label for="name" class="mb-1.5 block text-sm font-medium text-gray-700">
-						이름
+					<label for="myName" class="mb-1.5 block text-xs font-medium text-gray-500">
+						{isMentor ? '양육자 이름 (본인)' : '동반자 이름 (본인)'}
 					</label>
 					<input
-						id="name"
+						id="myName"
 						type="text"
-						bind:value={name}
+						bind:value={myName}
 						placeholder="이름을 입력하세요"
-						class="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm transition focus:border-{isMentor ? 'blue' : 'purple'}-500 focus:ring-2 focus:ring-{isMentor ? 'blue' : 'purple'}-500/20 focus:outline-none"
+						class="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm transition focus:border-gray-500 focus:ring-2 focus:ring-gray-200 focus:outline-none"
+						required
+					/>
+				</div>
+
+				<div>
+					<label for="partnerName" class="mb-1.5 block text-xs font-medium text-gray-500">
+						{isMentor ? '동반자 이름' : '양육자 이름'}
+					</label>
+					<input
+						id="partnerName"
+						type="text"
+						bind:value={partnerName}
+						placeholder="{isMentor ? '동반자' : '양육자'} 이름을 입력하세요"
+						class="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm transition focus:border-gray-500 focus:ring-2 focus:ring-gray-200 focus:outline-none"
 						required
 					/>
 				</div>
 
 				<button
 					type="submit"
-					disabled={!name.trim() || submitting}
-					class="w-full rounded-xl py-3 text-sm font-semibold text-white shadow-sm transition hover:opacity-90 disabled:opacity-40 {isMentor ? 'bg-blue-500' : 'bg-purple-500'}"
+					disabled={!myName.trim() || !partnerName.trim() || submitting}
+					class="w-full rounded-xl py-3 text-sm font-semibold text-white shadow-sm transition hover:opacity-90 disabled:opacity-40 {isMentor
+						? 'bg-blue-500'
+						: 'bg-purple-500'}"
 				>
 					시작하기
 				</button>
 			</form>
 		</div>
 
-		<p class="mt-6 text-center text-xs text-gray-400">
+		<p class="mt-4 text-center text-[11px] text-gray-400">
 			{isMentor ? '양육자' : '동반자'}로 로그인합니다
 		</p>
 	</div>

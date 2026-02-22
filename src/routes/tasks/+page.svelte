@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { Loader2, BookOpen, BookMarked, BookOpenCheck, Mic, PenLine } from 'lucide-svelte';
+	import { user } from '$lib/stores/user';
 
 	interface TaskCheck {
 		id: number;
@@ -28,6 +29,8 @@
 	let tasks = $state<TaskCheck[]>([]);
 	let loading = $state(true);
 
+	const pairKey = $derived($user?.pairKey || '');
+
 	function getTask(week: number, taskType: string) {
 		return tasks.find((t) => t.week === week && t.taskType === taskType);
 	}
@@ -38,17 +41,22 @@
 
 		if (current) {
 			current.completed = newCompleted;
+		} else {
+			tasks.push({ id: 0, week, taskType, completed: newCompleted });
 		}
 
-		await fetch('/api/tasks', {
+		const res = await fetch('/api/tasks', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ week, taskType, completed: newCompleted })
+			body: JSON.stringify({ pairKey, week, taskType, completed: newCompleted })
 		});
+		const saved = await res.json();
+		const idx = tasks.findIndex((t) => t.week === week && t.taskType === taskType);
+		if (idx >= 0) tasks[idx] = saved;
 	}
 
 	onMount(async () => {
-		const res = await fetch('/api/tasks');
+		const res = await fetch(`/api/tasks?pairKey=${encodeURIComponent(pairKey)}`);
 		tasks = await res.json();
 		loading = false;
 	});
@@ -57,7 +65,6 @@
 <div class="mx-auto max-w-lg p-4">
 	<h2 class="mb-4 text-base font-bold">일대일교육 과제점검</h2>
 
-	<!-- Task Descriptions -->
 	<div class="mb-6 space-y-2">
 		{#each TASK_DESCRIPTIONS as item}
 			<div class="rounded-lg border border-gray-100 bg-white p-3">
@@ -74,7 +81,6 @@
 			<Loader2 size={24} class="animate-spin text-gray-400" />
 		</div>
 	{:else}
-		<!-- Table -->
 		<div class="overflow-x-auto rounded-xl border border-gray-200">
 			<table class="w-full text-center text-xs">
 				<thead>
