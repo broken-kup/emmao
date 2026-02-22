@@ -32,9 +32,9 @@
 		const cat = CATEGORIES.find((c) => c.key === key);
 		if (cat?.textOnly) {
 			activeTab = 'text';
-			if (TEMPLATES[key]) {
-				textContent = TEMPLATES[key];
-			}
+			textContent = TEMPLATES[key] || '';
+		} else {
+			textContent = '';
 		}
 	}
 

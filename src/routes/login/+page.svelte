@@ -82,28 +82,18 @@
 				<div class="space-y-3">
 					<button
 						onclick={() => selectRole('mentor')}
-						class="flex w-full items-center gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition hover:border-blue-300 hover:shadow-md"
+						class="w-full rounded-2xl border border-gray-200 bg-white p-4 text-left shadow-sm transition hover:border-blue-300 hover:shadow-md"
 					>
-						<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-blue-100">
-							<span class="text-lg">🧑‍🏫</span>
-						</div>
-						<div class="text-left">
-							<p class="text-sm font-bold text-gray-900">양육자로 로그인</p>
-							<p class="text-xs text-gray-400">동반자를 양육하는 분</p>
-						</div>
+						<p class="text-sm font-bold text-gray-900">양육자로 로그인</p>
+						<p class="mt-0.5 text-xs text-gray-400">동반자를 양육하는 분</p>
 					</button>
 
 					<button
 						onclick={() => selectRole('companion')}
-						class="flex w-full items-center gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition hover:border-green-300 hover:shadow-md"
+						class="w-full rounded-2xl border border-gray-200 bg-white p-4 text-left shadow-sm transition hover:border-green-300 hover:shadow-md"
 					>
-						<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-green-100">
-							<span class="text-lg">🙋</span>
-						</div>
-						<div class="text-left">
-							<p class="text-sm font-bold text-gray-900">동반자로 로그인</p>
-							<p class="text-xs text-gray-400">양육자와 함께 동행하는 분</p>
-						</div>
+						<p class="text-sm font-bold text-gray-900">동반자로 로그인</p>
+						<p class="mt-0.5 text-xs text-gray-400">양육자와 함께 동행하는 분</p>
 					</button>
 				</div>
 			{:else}
