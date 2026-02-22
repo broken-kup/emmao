@@ -159,4 +159,47 @@
 			{/if}
 		</div>
 	</div>
+
+	<!-- Footer -->
+	<footer class="border-t border-gray-100 bg-white px-4 py-8">
+		<div class="mx-auto flex max-w-screen-xl flex-col">
+			<div class="flex flex-col items-start gap-8 md:justify-between lg:flex-row">
+				<div class="w-full max-w-sm">
+					<a class="flex items-center" href="https://flowbite-svelte.com">
+						<img src="/logo_blue.svg" class="me-3 h-8" alt="Broken Kup Logo" />
+						<span class="self-center text-2xl font-semibold whitespace-nowrap">Broken Kup</span>
+					</a>
+					<p class="mt-4 mb-3 max-w-sm text-sm leading-relaxed text-gray-500">
+						Broken Kup이란 하나님을 믿기로 결단했을 때, 깨어져버린 Cup과 같은 저를
+						하나님께서 온 세상을 담는 잔으로 사용하시겠다고 말씀해주신 경험에서 비롯된
+						K(kang)를 형상화한 브랜드 입니다.
+					</p>
+				</div>
+				<div class="flex flex-col items-start gap-4 md:flex-row md:gap-16 lg:justify-end">
+					<div>
+						<h2 class="mb-4 text-sm font-semibold uppercase text-gray-900">Connection</h2>
+						<ul class="space-y-3 text-sm text-gray-500">
+							<li>
+								<a href="mailto:rkdgygud@gmail.com" class="hover:underline" target="_blank" rel="noopener noreferrer">E-Mail</a>
+							</li>
+							<li>
+								<a href="https://www.instagram.com/k______up/" class="hover:underline" target="_blank" rel="noopener noreferrer">Instagram</a>
+							</li>
+						</ul>
+					</div>
+					<div>
+						<h2 class="mb-4 text-sm font-semibold uppercase text-gray-900">BrokenKup's Site</h2>
+						<ul class="space-y-3 text-sm text-gray-500">
+							<li>
+								<a href="https://board-game-six.vercel.app" class="hover:underline" target="_blank" rel="noopener noreferrer">보드게임 도감</a>
+							</li>
+							<li>
+								<a href="https://ajae-pedia-131813479911.us-west1.run.app" class="hover:underline" target="_blank" rel="noopener noreferrer">아재 백과사전</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</footer>
 </div>
