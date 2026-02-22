@@ -4,19 +4,39 @@
 	import { ImagePlus, FileText, ArrowLeft, Loader2 } from 'lucide-svelte';
 
 	const CATEGORIES = [
-		{ key: 'bible', label: '성경읽기', color: 'bg-amber-100 text-amber-700' },
-		{ key: 'sermon', label: '설교기록', color: 'bg-blue-100 text-blue-700' },
 		{ key: 'qt', label: 'QT', color: 'bg-green-100 text-green-700' },
+		{ key: 'bible', label: '성경읽기', color: 'bg-amber-100 text-amber-700', textOnly: true },
+		{ key: 'sermon', label: '설교기록', color: 'bg-blue-100 text-blue-700', textOnly: true },
 		{ key: 'free', label: '자유', color: 'bg-gray-100 text-gray-600' }
 	];
 
-	let selectedCategory = $state('bible');
+	const TEMPLATES: Record<string, string> = {
+		bible: '통독 구절 : \n시편 구절 : \n잠언 구절 : \n',
+		sermon: '설교제목 : \n설교내용 : \n마음에서 울리는 묵상 : \n'
+	};
+
+	let selectedCategory = $state('qt');
 	let activeTab = $state<'photo' | 'text'>('photo');
 	let caption = $state('');
 	let textContent = $state('');
 	let selectedFile = $state<File | null>(null);
 	let previewUrl = $state<string | null>(null);
 	let submitting = $state(false);
+
+	const isTextOnly = $derived(
+		CATEGORIES.find((c) => c.key === selectedCategory)?.textOnly ?? false
+	);
+
+	function selectCategory(key: string) {
+		selectedCategory = key;
+		const cat = CATEGORIES.find((c) => c.key === key);
+		if (cat?.textOnly) {
+			activeTab = 'text';
+			if (TEMPLATES[key]) {
+				textContent = TEMPLATES[key];
+			}
+		}
+	}
 
 	function handleFileSelect(e: Event) {
 		const input = e.target as HTMLInputElement;
@@ -106,7 +126,7 @@
 	<div class="flex gap-2 border-b border-gray-100 px-4 py-3">
 		{#each CATEGORIES as cat}
 			<button
-				onclick={() => (selectedCategory = cat.key)}
+				onclick={() => selectCategory(cat.key)}
 				class="rounded-full px-3 py-1.5 text-xs font-semibold transition {selectedCategory === cat.key
 					? cat.color + ' ring-2 ring-offset-1 ring-gray-300'
 					: 'bg-gray-50 text-gray-400'}"
@@ -116,27 +136,34 @@
 		{/each}
 	</div>
 
-	<!-- Tab -->
-	<div class="flex border-b border-gray-100">
-		<button
-			onclick={() => (activeTab = 'photo')}
-			class="flex flex-1 items-center justify-center gap-2 py-3 text-sm font-medium transition {activeTab === 'photo' ? 'border-b-2 border-black text-black' : 'text-gray-400'}"
-		>
-			<ImagePlus size={18} />
-			사진 게시물
-		</button>
-		<button
-			onclick={() => (activeTab = 'text')}
-			class="flex flex-1 items-center justify-center gap-2 py-3 text-sm font-medium transition {activeTab === 'text' ? 'border-b-2 border-black text-black' : 'text-gray-400'}"
-		>
-			<FileText size={18} />
-			글 게시물
-		</button>
-	</div>
+	<!-- Tab (hidden for text-only categories) -->
+	{#if !isTextOnly}
+		<div class="flex border-b border-gray-100">
+			<button
+				onclick={() => (activeTab = 'photo')}
+				class="flex flex-1 items-center justify-center gap-2 py-3 text-sm font-medium transition {activeTab === 'photo' ? 'border-b-2 border-black text-black' : 'text-gray-400'}"
+			>
+				<ImagePlus size={18} />
+				사진 게시물
+			</button>
+			<button
+				onclick={() => (activeTab = 'text')}
+				class="flex flex-1 items-center justify-center gap-2 py-3 text-sm font-medium transition {activeTab === 'text' ? 'border-b-2 border-black text-black' : 'text-gray-400'}"
+			>
+				<FileText size={18} />
+				글 게시물
+			</button>
+		</div>
+	{:else}
+		<div class="flex items-center gap-2 border-b border-gray-100 px-4 py-2.5">
+			<FileText size={16} class="text-gray-400" />
+			<span class="text-xs text-gray-500">글 게시물만 작성 가능한 카테고리입니다</span>
+		</div>
+	{/if}
 
 	<!-- Content -->
 	<div class="p-4">
-		{#if activeTab === 'photo'}
+		{#if activeTab === 'photo' && !isTextOnly}
 			{#if previewUrl}
 				<div class="relative mb-4 aspect-square w-full overflow-hidden rounded-xl bg-gray-50">
 					<img src={previewUrl} alt="미리보기" class="h-full w-full object-cover" />
@@ -172,7 +199,7 @@
 			<textarea
 				bind:value={textContent}
 				placeholder="나누고 싶은 이야기를 적어주세요..."
-				rows={10}
+				rows={12}
 				class="w-full resize-none rounded-xl border border-gray-200 p-4 text-sm leading-relaxed focus:border-gray-400 focus:outline-none"
 			></textarea>
 

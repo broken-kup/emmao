@@ -18,9 +18,9 @@
 	}
 
 	const CATEGORY_STYLES: Record<string, { label: string; color: string }> = {
+		qt: { label: 'QT', color: 'bg-green-100 text-green-700' },
 		bible: { label: '성경읽기', color: 'bg-amber-100 text-amber-700' },
 		sermon: { label: '설교기록', color: 'bg-blue-100 text-blue-700' },
-		qt: { label: 'QT', color: 'bg-green-100 text-green-700' },
 		free: { label: '자유', color: 'bg-gray-100 text-gray-600' }
 	};
 
@@ -119,8 +119,8 @@
 			/>
 		</div>
 	{:else if post.type === 'text' && post.content}
-		<div class="flex min-h-48 items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-6 py-8">
-			<p class="text-center text-base leading-relaxed whitespace-pre-wrap">{post.content}</p>
+		<div class="min-h-32 bg-gradient-to-br from-gray-50 to-gray-100 px-6 py-6">
+			<p class="text-sm leading-relaxed whitespace-pre-wrap">{post.content}</p>
 		</div>
 	{/if}
 
