@@ -13,7 +13,7 @@
 
 	$effect(() => {
 		if (browser && !$user && !isLoginPage) {
-			goto('/login?role=companion');
+			goto('/login');
 		}
 	});
 </script>
