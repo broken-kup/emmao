@@ -59,7 +59,7 @@
 		<img
 			src="/logo.png"
 			alt="엠마오로 가는 두 제자"
-			class="h-56 w-full object-cover sm:h-64"
+			class="h-56 w-full object-cover sm:h-85"
 		/>
 		<div class="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-white"></div>
 	</div>
